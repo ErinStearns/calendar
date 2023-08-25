@@ -7,7 +7,10 @@ import {
   Theme,
   createStyles,
 } from "@material-ui/core/styles";
-import { isSameMonth, isSameDay, getDate } from "date-fns";
+import {
+  useQuery,
+} from 'react-query'
+import { isSameMonth, isSameDay, getDate, parseISO } from "date-fns";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,6 +63,8 @@ const styles = (theme: Theme) =>
     },
     remindersContainer: {
       height: "100%",
+      maxHeight: "100px",
+      overflow: "scroll"
     },
   });
 
@@ -76,8 +81,33 @@ interface Props extends WithStyles<typeof styles> {
 const CalendarDay = (props: Props) => {
   const { classes, dateObj, calendarDate, onDayClick } = props;
   const [focused, setFocused] = useState(false);
+  
+
+  const getReminders = () => {
+    return (
+      fetch("https://test-project-interview-f0793-default-rtdb.firebaseio.com/reminders.json", {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const keys = Object.keys(data);
+        const objects = keys.map((key) => { return {...data[key], id:key}})
+        return objects;
+      })
+    )
+  }
+  
+  const query = useQuery('todos', getReminders)
+
+  // console.log(new Date(query.data ? (query.data[1] as any).date : undefined));
+
+  const todaysReminders = (query.data ?? []).filter((item: any) => isSameDay(parseISO(item.date), dateObj.date));
 
   const isToday = isSameDay(dateObj.date, new Date());
+  console.log(isToday);
   const avatarClass =
     isToday && focused
       ? classes.focusedTodayAvatar
@@ -89,6 +119,14 @@ const CalendarDay = (props: Props) => {
 
   const onMouseOver = () => setFocused(true);
   const onMouseOut = () => setFocused(false);
+
+  const todaysRemindersList = todaysReminders.map((item:any) => {
+    return (
+      <div key={item.id} style={{backgroundColor: `${item.color}`, margin: "5px"}}>
+        {item.name}
+      </div>
+    )
+  })
 
   return (
     <div
@@ -103,7 +141,7 @@ const CalendarDay = (props: Props) => {
     >
       <Avatar className={avatarClass}>{getDate(dateObj.date)}</Avatar>
       <div className={classes.remindersContainer}>
-        {/* reminders go here */}
+        {todaysRemindersList}
       </div>
     </div>
   );
