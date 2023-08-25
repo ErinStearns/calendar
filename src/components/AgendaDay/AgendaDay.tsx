@@ -5,7 +5,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import {
   WithStyles,
   withStyles,
@@ -48,6 +47,45 @@ const AgendaDay = (props: Props) => {
     ? dateFns.format(agendaStatus.date, "LLLL do, yyyy")
     : "Closing";
 
+    const unsortedArray = [
+      {
+        id: 1,
+        title: "Reminder 1",
+        date: "2023-08-24",
+        color: "red"
+      },
+      {
+        id: 2,
+        title: "Reminder 2",
+        date: "2023-08-21",
+        color: "orange"
+      },
+      {
+        id: 3,
+        title: "Reminder 3",
+        date: "2023-08-30",
+        color: "green"
+      },
+      {
+        id: 4,
+        title: "Reminder 3",
+        date: "2023-08-11",
+        color: "green"
+      }
+    ];
+    
+    const sortedArray = [...unsortedArray].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+
+    const sortedList = sortedArray.map((event) => {
+      return (
+        <div style={{margin: "10px", padding: "10px", background: `${event.color}`, borderRadius: "5px"}}>
+          <div style={{padding: "5px", color: "white"}}>{event.title}</div>
+          <div style={{padding: "5px", color: "white"}}>{event.date}</div>
+        </div>
+      )
+    })
+
   return (
     <Dialog
       open={agendaStatus.isOpen}
@@ -68,7 +106,7 @@ const AgendaDay = (props: Props) => {
       </DialogTitle>
       <Divider light />
       <DialogContent className={classes.remindersContainer}>
-        <Typography>Use this space to list the reminders.</Typography>
+        {sortedList}
       </DialogContent>
     </Dialog>
   );
