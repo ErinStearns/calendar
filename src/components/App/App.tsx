@@ -17,6 +17,13 @@ import * as dateFns from "date-fns";
 import CalendarGrid from "../CalendarGrid";
 import AgendaDayContainer from "../AgendaDay/AgendaDayContainer";
 import AddReminderContainer from "../AddReminder/AddReminderContainer";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query'
 import "./App.css";
 
 const styles = (theme: Theme) =>
@@ -91,32 +98,37 @@ class App extends Component<Props, State> {
     const month = date.toLocaleString("en-us", { month: "long" });
     const year = dateFns.getYear(date);
 
+    const queryClient = new QueryClient()
+
     return (
-      <div className={classes.root}>
-        <Paper className={classes.calendar}>
-          <header className={classes.calendarHeader}>
-            <IconButton aria-label="Last Month" onClick={this.prevMonth}>
-              <KeyboardArrowLeftIcon fontSize="large" />
-            </IconButton>
-            <Typography variant="h3">
-              {month} {year}
-            </Typography>
-            <IconButton aria-label="Next Month" onClick={this.nextMonth}>
-              <KeyboardArrowRightIcon fontSize="large" />
-            </IconButton>
-          </header>
-          <CalendarGrid date={date} />
-          <Fab
-            aria-label="Add"
-            className={classes.fabAdd}
-            onClick={onFabAddClick}
-          >
-            <AddIcon />
-          </Fab>
-        </Paper>
-        <AgendaDayContainer />
-        <AddReminderContainer />
-      </div>
+      <QueryClientProvider client={queryClient}>
+
+        <div className={classes.root}>
+          <Paper className={classes.calendar}>
+            <header className={classes.calendarHeader}>
+              <IconButton aria-label="Last Month" onClick={this.prevMonth}>
+                <KeyboardArrowLeftIcon fontSize="large" />
+              </IconButton>
+              <Typography variant="h3">
+                {month} {year}
+              </Typography>
+              <IconButton aria-label="Next Month" onClick={this.nextMonth}>
+                <KeyboardArrowRightIcon fontSize="large" />
+              </IconButton>
+            </header>
+            <CalendarGrid date={date} />
+            <Fab
+              aria-label="Add"
+              className={classes.fabAdd}
+              onClick={onFabAddClick}
+            >
+              <AddIcon />
+            </Fab>
+          </Paper>
+          <AgendaDayContainer />
+          <AddReminderContainer />
+        </div>
+      </QueryClientProvider>
     );
   }
 }
