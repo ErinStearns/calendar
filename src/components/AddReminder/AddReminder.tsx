@@ -1,11 +1,11 @@
-import React from "react";
+import React, {ChangeEvent, useState} from "react";
 import CloseIcon from "@material-ui/icons/Close";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
+import ReminderForm from "./ReminderForm.js";
 import {
   WithStyles,
   withStyles,
@@ -33,8 +33,11 @@ interface Props extends WithStyles<typeof styles> {
   onClose: () => void;
 }
 
+
+
 const AddReminder = (props: Props) => {
   const { classes, isOpen, onClose } = props;
+
 
   return (
     <Dialog
@@ -56,9 +59,7 @@ const AddReminder = (props: Props) => {
       </DialogTitle>
       <Divider light />
       <DialogContent className={classes.addReminderFormContainer}>
-        <Typography>
-          Use this space to create the UI to add a reminder to the calendar.
-        </Typography>
+        <ReminderForm />
       </DialogContent>
     </Dialog>
   );
